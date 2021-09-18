@@ -1,5 +1,6 @@
 import 'package:booking_app_client/providers/auth_provider.dart';
 import 'package:booking_app_client/providers/main_provider.dart';
+import 'package:booking_app_client/screens/book_device_screen.dart';
 import 'package:booking_app_client/screens/login_screen.dart';
 import 'package:booking_app_client/screens/splash_screen.dart';
 import 'package:booking_app_client/screens/veiw_screens/home_screen.dart';
@@ -29,22 +30,26 @@ class MyApp extends StatelessWidget {
       future: Future.delayed(Duration(seconds: 2)),
       builder: (context, snapshot) => Consumer<AuthProvider>(
         builder: (context, valueAuth, child) => MaterialApp(
-            title: 'Booking App Employee',
-            debugShowCheckedModeBanner: false,
-            theme: ThemeData(
+          title: 'Booking App Employee',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
               primarySwatch: Colors.blue,
-            ),
-            home: snapshot.connectionState == ConnectionState.waiting
-                ? SplashScreen()
-                : valueAuth.isAuth
-                    ? HomeScreen()
-                    : FutureBuilder(
-                        future: valueAuth.tryAutoLogIn(),
-                        builder: (context, snapshot) =>
-                            snapshot.connectionState == ConnectionState.waiting
-                                ? SplashScreen()
-                                : LoginScreen() ,
-                      )),
+              appBarTheme: AppBarTheme(
+                titleSpacing: 0,
+              )),
+              
+          home: snapshot.connectionState == ConnectionState.waiting
+              ? SplashScreen()
+              : valueAuth.isAuth
+                  ? HomeScreen()
+                  : FutureBuilder(
+                      future: valueAuth.tryAutoLogIn(),
+                      builder: (context, snapshot) =>
+                          snapshot.connectionState == ConnectionState.waiting
+                              ? SplashScreen()
+                              : LoginScreen(),
+                    ),
+        ),
       ),
     );
   }

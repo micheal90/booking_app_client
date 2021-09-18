@@ -1,7 +1,8 @@
 import 'package:booking_app_client/models/category_model.dart';
 import 'package:booking_app_client/models/device_model.dart';
 import 'package:booking_app_client/models/reserve_device_model.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:booking_app_client/sevices/firestore_device.dart';
+import 'package:booking_app_client/sevices/firestore_reserve_devices.dart';
 import 'package:flutter/material.dart';
 
 class MainProvider with ChangeNotifier {
@@ -103,9 +104,10 @@ class MainProvider with ChangeNotifier {
   List<DeviceModel> iosDevicesList = [];
   List<DeviceModel> pcDevicesList = [];
   List<DeviceModel> othersDevicesList = [];
-  List<ReserveDeviceModel> orderList =
-      []; //list for get all orders of device from database for view to user before book device
-  List<ReserveDeviceModel> scheduleOrder = [];
+  List<ReserveDeviceModel> orderList = [];
+
+  ///list for get all orders of device from database for view to user before book device
+  List<ReserveDeviceModel> scheduleOrder = []; //used in my schedule screen
   List<ReserveDeviceModel> reservedDevicesList = [];
   List<ReserveDeviceModel> checkList = [];
   DateTime? startDateTime;
@@ -115,16 +117,18 @@ class MainProvider with ChangeNotifier {
   ValueNotifier<bool> isLoading = ValueNotifier(false);
   String? userId;
 
+  //firebase services
+  FirestoreDevice firestoreDevice = FirestoreDevice();
+  FirestorReserveDevices firestorReserveDevices = FirestorReserveDevices();
+
   Future getDevices() async {
     isLoading.value = true;
-    clearAllList();
-    final CollectionReference devicesCollectionRef =
-        FirebaseFirestore.instance.collection('devices');
-    var devices = await devicesCollectionRef.get();
+    clearAllList(); //reset all lists befor getdevices
 
-    for (var i = 0; i < devices.docs.length; i++) {
-      allDevicesList.add(
-          DeviceModel.fromMap(devices.docs[i].data() as Map<String, dynamic>));
+    var devices = await firestoreDevice.getDevices();
+    //add all devices to allDevicesList after get
+    for (var dev in devices) {
+      allDevicesList.add(DeviceModel.fromMap(dev.data()));
     }
     print('all device get: ${allDevicesList.length}');
 
@@ -154,20 +158,15 @@ class MainProvider with ChangeNotifier {
   }
 
   Future checkStartReserveDate() async {
-    final CollectionReference orderReserveRef =
-        FirebaseFirestore.instance.collection('orderReservedDevices');
-    final CollectionReference reservedCollectionRef =
-        FirebaseFirestore.instance.collection('reservedDevices');
-    //get all docs in orderReseveRef
-    var allOrdersReserved = await orderReserveRef.get();
+    //get all order in orderReseveRef
+    var allOrdersReserved = await firestorReserveDevices.getAllOrder();
     checkList = [];
-    print('order length: ${allOrdersReserved.docs.length}');
+    print('order length: ${allOrdersReserved.length}');
     // check if allOrdersReserved is empty
-    if (allOrdersReserved.docs.isEmpty) return;
+    if (allOrdersReserved.isEmpty) return;
     //loop in allOrdersReserved and save in checkList
-    for (var i = 0; i < allOrdersReserved.docs.length; i++) {
-      checkList.add(ReserveDeviceModel.fromMap(
-          allOrdersReserved.docs[i].data() as Map<String, dynamic>));
+    for (var order in allOrdersReserved) {
+      checkList.add(ReserveDeviceModel.fromMap(order.data()));
     }
 
     print('checkList length:${checkList.length}');
@@ -187,19 +186,16 @@ class MainProvider with ChangeNotifier {
             type: order.type,
             startDate: order.startDate,
             endDate: order.endDate);
-
-        await reservedCollectionRef.add(resDevice.toMap());
+        await firestorReserveDevices.addReserveDevice(resDevice);
 
         //change key isBooked to true in device and update device
         DeviceModel deviceModel = getDeviceById(order.id);
         await updateBookedDevice(deviceModel, book: true);
 
         // delete the order reservation from database
-        allOrdersReserved.docs.forEach((element) async {
-          if (ReserveDeviceModel.fromMap(element.data() as Map<String, dynamic>)
-                  .id ==
-              deviceModel.id) {
-            await orderReserveRef.doc(element.id).delete();
+        allOrdersReserved.forEach((element) async {
+          if (ReserveDeviceModel.fromMap(element.data()).id == deviceModel.id) {
+            await firestorReserveDevices.deleteOrderReserved(element.id);
           }
         });
       }
@@ -207,16 +203,16 @@ class MainProvider with ChangeNotifier {
   }
 
   Future checkEndReserveDate() async {
-    CollectionReference reservedCollectionRef =
-        FirebaseFirestore.instance.collection('reservedDevices');
-    reservedCollectionRef.get().then((value) {
+    //get all docs in orderReseveRef
+    await firestorReserveDevices.getAllreservedDevices().then((value) {
       List<ReserveDeviceModel> list = [];
-      for (var i = 0; i < value.docs.length; i++) {
-        list.add(ReserveDeviceModel.fromMap(
-            value.docs[i].data() as Map<String, dynamic>));
+      for (var i in value) {
+        list.add(ReserveDeviceModel.fromMap(i.data()));
       }
+      //check if found orders
       if (list.isEmpty) return;
       list.forEach((device) async {
+        //check if date now is afer the end date in device reserved
         if (DateTime.now().isAfter(DateTime.parse(device.endDate))) {
           await unBookedDevice(device);
         }
@@ -224,11 +220,13 @@ class MainProvider with ChangeNotifier {
     });
   }
 
+  //set start date when user book
   void changeStartDateTime(DateTime date) {
     startDateTime = date;
     notifyListeners();
   }
 
+  //set end date when user book
   void changeEndDateTime(DateTime date) {
     endDateTime = date;
     notifyListeners();
@@ -248,6 +246,24 @@ class MainProvider with ChangeNotifier {
   }
 
   Future filterDevices() async {
+    devicesNotBookedList =
+        allDevicesList.where((element) => !element.isBooked).toList();
+    androidDevicesList = allDevicesList
+        .where((element) =>
+            (element.type == 'Android' && element.isBooked == false))
+        .toList();
+    iosDevicesList = allDevicesList
+        .where(
+            (element) => (element.type == 'IOS' && element.isBooked == false))
+        .toList();
+    pcDevicesList = allDevicesList
+        .where((element) => (element.type == 'PC' && element.isBooked == false))
+        .toList();
+    othersDevicesList = allDevicesList
+        .where((element) =>
+            (element.type == 'OTHERS' && element.isBooked == false))
+        .toList();
+/*
     allDevicesList.forEach((device) {
       //filter devices as booked
       if (device.isBooked == false) {
@@ -259,7 +275,7 @@ class MainProvider with ChangeNotifier {
         }
       }
 
-      //filter devices ad type
+      //filter devices as type
       if (device.type == 'Android' && device.isBooked == false) {
         var isExest = androidDevicesList.indexWhere(
           (element) => element.id == device.id,
@@ -287,6 +303,7 @@ class MainProvider with ChangeNotifier {
         }
       }
     });
+    */
   }
 
   DeviceModel getDeviceById(String id) {
@@ -294,22 +311,20 @@ class MainProvider with ChangeNotifier {
     return allDevicesList.firstWhere((device) => device.id == id);
   }
 
-  //get order orders of device from database
+  //get orders of device from database
   Future getOrderResevedDeviceByDeviceId(String id) async {
     isLoading.value = true;
     List<ReserveDeviceModel> list = [];
-    final CollectionReference orderResvDevicesRef =
-        FirebaseFirestore.instance.collection('orderReservedDevices');
-    var data = await orderResvDevicesRef.get();
 
-    if (data.docs.isEmpty) {
+    var data = await firestorReserveDevices.getAllOrder();
+    if (data.isEmpty) {
       isLoading.value = false;
       orderList = [];
+    } else {
+      data.forEach((element) {
+        list.add(ReserveDeviceModel.fromMap(element.data()));
+      });
     }
-    data.docs.forEach((element) {
-      list.add(
-          ReserveDeviceModel.fromMap(element.data() as Map<String, dynamic>));
-    });
     //return all orders reserved of device
     var devices = list.where((element) => element.id == id).toList();
     isLoading.value = false;
@@ -318,13 +333,11 @@ class MainProvider with ChangeNotifier {
 
   Future getReservedDevicesByUserId(String? id) async {
     userId = id;
-    CollectionReference reservedCollectionRef =
-        FirebaseFirestore.instance.collection('reservedDevices');
-    reservedCollectionRef.get().then((value) {
+
+    firestorReserveDevices.getAllreservedDevices().then((value) {
       List<ReserveDeviceModel> list = [];
-      for (var i = 0; i < value.docs.length; i++) {
-        list.add(ReserveDeviceModel.fromMap(
-            value.docs[i].data() as Map<String, dynamic>));
+      for (var i in value) {
+        list.add(ReserveDeviceModel.fromMap(i.data()));
       }
       if (list.isEmpty) return;
       list.forEach((device) {
@@ -343,13 +356,10 @@ class MainProvider with ChangeNotifier {
   }
 
   Future getOrderDevResByUserId(String? userId) async {
-    final CollectionReference orderResvDevicesRef =
-        FirebaseFirestore.instance.collection('orderReservedDevices');
-    orderResvDevicesRef.get().then((value) {
+    firestorReserveDevices.getAllOrder().then((value) {
       List<ReserveDeviceModel> list = [];
-      for (var i = 0; i < value.docs.length; i++) {
-        list.add(ReserveDeviceModel.fromMap(
-            value.docs[i].data() as Map<String, dynamic>));
+      for (var i in value) {
+        list.add(ReserveDeviceModel.fromMap(i.data()));
       }
       if (list.isEmpty) return;
       list.forEach((order) {
@@ -371,87 +381,82 @@ class MainProvider with ChangeNotifier {
   Future<bool> checkIfdeviceBooked(String id, String start, String end) async {
     List<ReserveDeviceModel> list = [];
 
-    final CollectionReference reservedDevicesRef =
-        FirebaseFirestore.instance.collection('reservedDevices');
     //get all order from database
-    await reservedDevicesRef.get().then((value) {
+    await firestorReserveDevices.getAllreservedDevices().then((value) {
       //check if order is empty
-      if (value.docs.isEmpty) return;
+      if (value.isEmpty) return;
       //add all orders to list
-      value.docs.forEach((element) {
-        list.add(
-            ReserveDeviceModel.fromMap(element.data() as Map<String, dynamic>));
+      value.forEach((element) {
+        list.add(ReserveDeviceModel.fromMap(element.data()));
       });
     });
 
-    if (list.isEmpty) return false;
-    var startD = DateTime.parse(start);
-    var endD = DateTime.parse(end);
-    //check if the new reserve device found in list
-    var isExit = list.indexWhere((device) => device.id == id);
-    if (isExit == -1) return false;
-    //get the reserve device from list if found
-    // for compare the date if can be reserved
-    var device = list.firstWhere((device) => (device.id == id));
-    //if startDate new reserved is after the order endDate &&
-    //if startDate && the endDate is befor the order stardDate
-    if (startD.isAfter(DateTime.parse(device.endDate))) {
+    if (list.isEmpty) {
       return false;
-    } else if ((startD.isBefore(DateTime.parse(device.startDate)) ||
-            start.compareTo(device.startDate) == 0) &&
-        (endD.isBefore(DateTime.parse(device.startDate)) ||
-            end.compareTo(device.startDate) == 0)) {
-      return false;
-    } else
-      return true;
+    } else {
+      var startD = DateTime.parse(start);
+      var endD = DateTime.parse(end);
+      //check if the new reserve device found in list
+      var isExit = list.indexWhere((device) => device.id == id);
+      if (isExit == -1) return false;
+      //get the reserve device from list if found
+      // for compare the date if can be reserved
+      var device = list.firstWhere((device) => (device.id == id));
+      //if startDate new reserved is after the order endDate &&
+      //if startDate && the endDate is befor the order stardDate
+      if (startD.isAfter(DateTime.parse(device.endDate))) {
+        return false;
+      } else if ((startD.isBefore(DateTime.parse(device.startDate)) ||
+              start.compareTo(device.startDate) == 0) &&
+          (endD.isBefore(DateTime.parse(device.startDate)) ||
+              end.compareTo(device.startDate) == 0)) {
+        return false;
+      } else
+        return true;
+    }
   }
 
   Future<bool> checkIfDeviceInOrder(String id, String start, String end) async {
     List<ReserveDeviceModel> list = [];
 
-    final CollectionReference orderResvDevicesRef =
-        FirebaseFirestore.instance.collection('orderReservedDevices');
     //get all order from database
-    await orderResvDevicesRef.get().then((value) {
+    await firestorReserveDevices.getAllOrder().then((value) {
       //check if orders is empty
-      if (value.docs.isEmpty) return;
+      if (value.isEmpty) return;
       //add all orders to list
-      value.docs.forEach((element) {
-        list.add(
-            ReserveDeviceModel.fromMap(element.data() as Map<String, dynamic>));
+      value.forEach((element) {
+        list.add(ReserveDeviceModel.fromMap(element.data()));
       });
     });
 
-    if (list.isEmpty) return false;
-    var startD = DateTime.parse(start);
-    var endD = DateTime.parse(end);
-    //check if the new reserve device found in list
-    var isExit = list.indexWhere((device) => device.id == id);
-    if (isExit == -1) return false;
-    //get the reserve device from list if found
-    // for compare the date if can be reserved
-    var device = list.firstWhere(
-      (device) => (device.id == id),
-    );
-    //if startDate new reserved is after the order endDate &&
-    //if startDate && the endDate is befor the order stardDate
-    if (startD.isAfter(DateTime.parse(device.endDate))) {
+    if (list.isEmpty) {
       return false;
-    } else if ((startD.isBefore(DateTime.parse(device.startDate)) ||
-            start.compareTo(device.startDate) == 0) &&
-        (endD.isBefore(DateTime.parse(device.startDate)) ||
-            end.compareTo(device.startDate) == 0)) {
-      return false;
-    } else
-      return true;
+    } else {
+      var startD = DateTime.parse(start);
+      var endD = DateTime.parse(end);
+      //check if the new reserve device found in list
+      var isExit = list.indexWhere((device) => device.id == id);
+      if (isExit == -1) return false;
+      //get the reserve device from list if found
+      // for compare the date if can be reserved
+      var device = list.firstWhere(
+        (device) => (device.id == id),
+      );
+      //if startDate new reserved is after the order endDate &&
+      //if startDate && the endDate is befor the order stardDate
+      if (startD.isAfter(DateTime.parse(device.endDate))) {
+        return false;
+      } else if ((startD.isBefore(DateTime.parse(device.startDate)) ||
+              start.compareTo(device.startDate) == 0) &&
+          (endD.isBefore(DateTime.parse(device.startDate)) ||
+              end.compareTo(device.startDate) == 0)) {
+        return false;
+      } else
+        return true;
+    }
   }
 
   Future bookDevice(DeviceModel deviceModel) async {
-    final CollectionReference orderResvCollectionRef =
-        FirebaseFirestore.instance.collection('orderReservedDevices');
-    final CollectionReference reservedRef =
-        FirebaseFirestore.instance.collection('reservedDevices');
-
     ReserveDeviceModel resDevice = ReserveDeviceModel(
         id: deviceModel.id,
         deviceName: deviceModel.name,
@@ -477,10 +482,10 @@ class MainProvider with ChangeNotifier {
         return 'The device cannot be reserved on this date';
       }
       if (DateTime.now().isAfter(startDateTime!)) {
-        await reservedRef.add(resDevice.toMap());
+        await firestorReserveDevices.addReserveDevice(resDevice);
         await updateBookedDevice(deviceModel, book: true);
       } else {
-        await orderResvCollectionRef.add(resDevice.toMap());
+        await firestorReserveDevices.addOrderReserve(resDevice);
       }
     }
 
@@ -491,8 +496,6 @@ class MainProvider with ChangeNotifier {
   }
 
   Future updateBookedDevice(DeviceModel deviceModel, {bool? book}) async {
-    CollectionReference devicesCollectionRef =
-        FirebaseFirestore.instance.collection('devices');
     DeviceModel updatedDevice = DeviceModel(
         id: deviceModel.id,
         name: deviceModel.name,
@@ -503,10 +506,7 @@ class MainProvider with ChangeNotifier {
         screenSize: deviceModel.screenSize,
         battery: deviceModel.battery,
         imageUrl: deviceModel.imageUrl);
-    // print(deviceModel.id);
-    await devicesCollectionRef
-        .doc(deviceModel.id)
-        .update(updatedDevice.toMap());
+    await firestoreDevice.updateDevice(deviceModel: updatedDevice);
   }
 
   Future unBookedDevice(ReserveDeviceModel reserveDeviceModel) async {
@@ -514,16 +514,12 @@ class MainProvider with ChangeNotifier {
 
     var deviceModel = allDevicesList //get deviceModel from reservation id
         .firstWhere((element) => element.id == reserveDeviceModel.id);
-    final CollectionReference reservedCollectionRef =
-        FirebaseFirestore.instance.collection('reservedDevices');
+
     //remove reseved divice from database
-    reservedCollectionRef.get().then((value) async {
-      for (var i = 0; i < value.docs.length; i++) {
-        if (ReserveDeviceModel.fromMap(
-                    value.docs[i].data() as Map<String, dynamic>)
-                .id ==
-            reserveDeviceModel.id) {
-          await reservedCollectionRef.doc(value.docs[i].id).delete();
+    await firestorReserveDevices.getAllreservedDevices().then((value) async {
+      for (var i in value) {
+        if (ReserveDeviceModel.fromMap(i.data()).id == reserveDeviceModel.id) {
+          await firestorReserveDevices.deleteReservedDevice(i.id);
         }
       }
     });
@@ -538,11 +534,10 @@ class MainProvider with ChangeNotifier {
   Future deleteOrderReservation(ReserveDeviceModel reserveDeviceModel) async {
     isLoading.value = true;
     List<ReserveDeviceModel> list = [];
-    final CollectionReference orderResvDevicesRef =
-        FirebaseFirestore.instance.collection('orderReservedDevices');
-    var orders = await orderResvDevicesRef.get();
-    if (orders.docs.isEmpty) return;
-    orders.docs.forEach((order) async {
+
+    var orders = await firestorReserveDevices.getAllOrder();
+    if (orders.isEmpty) return;
+    orders.forEach((order) async {
       list.add(
           ReserveDeviceModel.fromMap(order.data() as Map<String, dynamic>));
       var deviceRes =
@@ -550,7 +545,7 @@ class MainProvider with ChangeNotifier {
       if (deviceRes.id == reserveDeviceModel.id &&
           (deviceRes.startDate == reserveDeviceModel.startDate &&
               deviceRes.endDate == reserveDeviceModel.endDate))
-        await orderResvDevicesRef.doc(order.id).delete();
+        await firestorReserveDevices.deleteOrderReserved(order.id);
     });
     await getDevices();
     await getOrderResevedDeviceByDeviceId(userId!);

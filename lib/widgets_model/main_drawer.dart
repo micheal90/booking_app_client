@@ -21,7 +21,8 @@ class MainDrawer extends StatelessWidget {
             Consumer<AuthProvider>(
               builder: (context, valueAuth, child) => Container(
                 height: 150,
-                padding: EdgeInsets.only(top: 30,left: 30,right: 30,bottom: 10),
+                padding:
+                    EdgeInsets.only(top: 30, left: 10, right: 10, bottom: 10),
                 color: Colors.blue,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -45,12 +46,37 @@ class MainDrawer extends StatelessWidget {
                                         valueAuth.userModel!.imageUrl,
                                         fit: BoxFit.fill,
                                       ))),
-                    CustomText(
-                      text:
-                          '${valueAuth.userModel!.name} ${valueAuth.userModel!.lastName}',
-                      fontSize: 20,
-                      color: Colors.white,
-                    ),
+                    // CustomText(
+                    //   text:
+                    //       '${valueAuth.userModel!.name} ${valueAuth.userModel!.lastName}',
+                    //   fontSize: 20,
+                    //   color: Colors.white,
+                    // ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+
+                      children: [
+                        CustomText(
+                          text: 'Employee App',
+                          alignment: Alignment.center,
+                          fontSize: 22,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CustomText(
+                                text: 'Logged as ', color: Colors.red[700]),
+                            CustomText(
+                              color: Colors.white,
+                              text:
+                                  '${valueAuth.userModel!.name} ${valueAuth.userModel!.lastName}',
+                            ),
+                          ],
+                        ),
+                      ],
+                    )
                   ],
                 ),
               ),

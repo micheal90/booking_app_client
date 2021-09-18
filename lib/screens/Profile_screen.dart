@@ -46,7 +46,6 @@ class ProfileScreen extends StatelessWidget {
                           await valueAuth.pickImage(ImageSource.gallery);
                           Navigator.pop(context);
                         },
-                        
                       ),
                       ListTile(
                         leading: Icon(
@@ -55,7 +54,8 @@ class ProfileScreen extends StatelessWidget {
                         ),
                         title: Text('Remove'),
                         onTap: () async {
-                          await valueAuth.removeProfileImage(valueAuth.userModel!.id);
+                          await valueAuth
+                              .removeProfileImage(valueAuth.userModel!.id);
                           Navigator.pop(context);
                         },
                       ),
@@ -133,23 +133,26 @@ class ProfileScreen extends StatelessWidget {
                   height: 20,
                 ),
                 CustomListTileProfile(
-                  leading: Icon(Icons.person),
+                  leading: Icon(Icons.person, color: KPrimaryColor),
                   title: 'Name',
                   subtitle:
                       value.userModel!.name + ' ' + value.userModel!.lastName,
                 ),
                 CustomListTileProfile(
-                  leading: Icon(Icons.group_rounded),
+                  leading: Icon(Icons.group_rounded, color: KPrimaryColor),
                   title: 'Occupation Group',
                   subtitle: value.userModel!.occupationGroup,
                 ),
                 CustomListTileProfile(
-                  leading: Icon(Icons.email),
+                  leading: Icon(Icons.email, color: KPrimaryColor),
                   title: 'Email',
                   subtitle: value.userModel!.email,
                 ),
                 CustomListTileProfile(
-                  leading: Icon(Icons.phone),
+                  leading: Icon(
+                    Icons.phone,
+                    color: KPrimaryColor,
+                  ),
                   title: 'Phone',
                   subtitle: value.userModel!.phone,
                 ),
@@ -157,17 +160,23 @@ class ProfileScreen extends StatelessWidget {
                   height: 30,
                 ),
                 TextButton.icon(
-                    onPressed: () {
-                      value.logOut().then((value) => Navigator.of(context)
-                              .pushReplacement(MaterialPageRoute(
-                            builder: (context) => LoginScreen(),
-                          )));
-                    },
-                    icon: Icon(Icons.logout),
-                    label: CustomText(
-                      text: 'Log Out',
+                  onPressed: () {
+                    value.logOut().then((value) =>
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => LoginScreen(),
+                        )));
+                  },
+                  icon: Icon(
+                    Icons.logout,
+                  ),
+                  label: Text(
+                    'Log Out',
+                    style: TextStyle(
                       color: Colors.red,
-                    ))
+                    ),
+                  ),
+                  style: ButtonStyle(alignment: Alignment.center),
+                )
               ]),
             ),
           ),

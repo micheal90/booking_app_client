@@ -1,25 +1,27 @@
 import 'package:flutter/material.dart';
 
 class CustomTextFormField extends StatelessWidget {
- final TextEditingController? controller;
- final String label;
- final String hint;
- final bool isPassword;
- final IconData prefixIcon;
- final Widget? suffixIcon;
- final TextInputType type;
- final String? Function(String?)? validate;
- final Function(String?)? onSave;
+  final TextEditingController? controller;
+  final String label;
+  final String hint;
+  final bool isPassword;
+  final IconData prefixIcon;
+  final Widget? suffixIcon;
+  final TextInputType type;
+  final String? Function(String?)? validate;
+  final Function(String?)? onSave;
+  final Function(String?)? onFieldSubmitted;
   CustomTextFormField({
-     this.controller,
+    this.controller,
     required this.label,
     required this.hint,
     required this.isPassword,
     required this.prefixIcon,
-     this.suffixIcon,
+    this.suffixIcon,
     required this.type,
     required this.validate,
     required this.onSave,
+    this.onFieldSubmitted,
   });
 
   @override
@@ -30,6 +32,7 @@ class CustomTextFormField extends StatelessWidget {
       obscureText: isPassword,
       validator: validate,
       onSaved: onSave,
+      onFieldSubmitted: onFieldSubmitted,
       decoration: InputDecoration(
           labelText: label,
           hintText: hint,

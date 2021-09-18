@@ -44,7 +44,9 @@ class _BookDeviceScreenState extends State<BookDeviceScreen> {
         backgroundColor: Colors.black54,
       ));
     } else {
-      isLoading = true;
+      setState(() {
+        isLoading = true;
+      });
       await Provider.of<MainProvider>(context, listen: false)
           .bookDevice(deviceModel)
           .then((value) {
@@ -273,11 +275,16 @@ class _BookDeviceScreenState extends State<BookDeviceScreen> {
               ? CircularProgressIndicator()
               : Padding(
                   padding: const EdgeInsets.all(12.0),
-                  child: CustomElevatedButton(
-                    text: 'Book',
-                    onPressed: () => bookDevice(context, valueMain),
-                  ),
-                )
+                  child: isLoading
+                      ? CircularProgressIndicator()
+                      : CustomElevatedButton(
+                          text: 'Book',
+                          onPressed: () => bookDevice(context, valueMain),
+                        ),
+                ),
+                SizedBox(
+            height: 20,
+          ),
         ],
       ),
     );

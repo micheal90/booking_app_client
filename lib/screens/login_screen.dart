@@ -17,12 +17,18 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _emailController = TextEditingController();
+  final _emailController = TextEditingController();
 
-  final TextEditingController _passwordController = TextEditingController();
+  final _passwordController = TextEditingController();
 
   final GlobalKey<FormState> _formKey = GlobalKey();
+  bool _isShowPassword=true;
   bool _isLoading = false;
+  void changeShowPassword() {
+    setState(() {
+      _isShowPassword = !_isShowPassword;
+    });
+  }
 
   void submit(BuildContext context) async {
     FocusScope.of(context).unfocus();
@@ -51,7 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return DoubleBack(
-          child: Scaffold(
+      child: Scaffold(
           body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
@@ -119,18 +125,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                     controller: _passwordController,
                                     label: 'Password',
                                     hint: "Minimum 6 characters",
-                                    isPassword: authValue.isShowPassword.value
+                                    onFieldSubmitted: (_) => submit(context),
+                                    isPassword: _isShowPassword
                                         ? true
                                         : false,
                                     prefixIcon: Icons.lock,
                                     suffixIcon: IconButton(
-                                      icon: authValue.isShowPassword.value
+                                      icon: _isShowPassword
                                           ? Icon(Icons.visibility_off_rounded)
                                           : Icon(Icons.visibility),
-                                      onPressed: () {
-                                        //change show password state
-                                        authValue.changeShowPassword();
-                                      },
+                                      onPressed: changeShowPassword,
                                     ),
                                     type: TextInputType.text,
                                     validate: (String? val) {

@@ -26,7 +26,7 @@ class MyReservedDevicesScreen extends StatelessWidget {
               : valueMain.reservedDevicesList.isEmpty
                   ? Center(
                       child: CustomText(
-                        text: 'No device booked yet',
+                        text: 'No device reserved yet',
                         fontSize: 22,
                         alignment: Alignment.center,
                       ),

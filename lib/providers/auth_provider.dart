@@ -11,29 +11,28 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthProvider with ChangeNotifier {
-  ValueNotifier<bool> isShowPassword = ValueNotifier(true);
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   String? email;
   String? password;
   String? imgUrl;
-  UserModel? userModel;
+  EmployeeModel? userModel;
   ValueNotifier<bool> isLoading = ValueNotifier(false);
-  bool get isAuth {
-    return userModel != null;
-  }
-
   final picker = ImagePicker();
   File? image;
+
+  bool get isAuth {
+    //check if found userData for auto login
+    return userModel != null;
+  }
 
   Future logInWithEmail() async {
     try {
       await _firebaseAuth
           .signInWithEmailAndPassword(email: email!, password: password!)
           .then((userCredential) async {
-        //userCredential = userCred;
+        //get userData from database after login
         await getUserData(userCredential.user!.uid);
-
-        //set in sharedPreferences
+        //set user in sharedPreferences
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String userData = json.encode({
           'email': userModel!.email,
@@ -51,34 +50,32 @@ class AuthProvider with ChangeNotifier {
 
   Future getUserData(String userId) async {
     CollectionReference userCollectionRef =
-        FirebaseFirestore.instance.collection('users');
+        FirebaseFirestore.instance.collection('employee');
     await userCollectionRef.doc(userId).get().then((userData) {
-      userModel = UserModel.fromMap(userData.data() as Map<String, dynamic>);
+      userModel = EmployeeModel.fromMap(userData.data() as Map<String, dynamic>);
       //print('user: ${userModel!.toMap()}');
     });
-
     notifyListeners();
   }
 
+  //set user in sharedPreferences
   Future setUserData() async {
-    try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String userData = json.encode({
-        'email': userModel!.email,
-        'userId': userModel!.id,
-      });
-      prefs.setString('userData', userData);
-      print('set User');
-    } catch (e) {
-      print(e.toString());
-    }
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String userData = json.encode({
+      'email': userModel!.email,
+      'userId': userModel!.id,
+    });
+    prefs.setString('userData', userData);
+    print('set User');
   }
 
+  //try auto log in if get user from sharedpreferences
   Future<bool> tryAutoLogIn() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (!prefs.containsKey('userData')) return false;
     Map<String, dynamic> extractUserData =
         json.decode(prefs.getString('userData')!);
+    //get all userData from database
     getUserData(extractUserData['userId']);
 
     print('get user data');
@@ -92,33 +89,26 @@ class AuthProvider with ChangeNotifier {
     prefs.clear();
   }
 
-  Future updateUserData({UserModel? userUpdate}) async {
+  Future updateUserData({EmployeeModel? userUpdate}) async {
     isLoading.value = true;
     CollectionReference userCollectionRef =
-        FirebaseFirestore.instance.collection('users');
-    // UserModel _userModel = UserModel(
-    //   id: userModel!.id,
-    //   name: userModel!.name,
-    //   lastName: userModel!.lastName,
-    //   occupationGroup: userModel!.occupationGroup,
-    //   email: userModel!.email,
-    //   imageUrl: imgUrl == null ? userModel!.imageUrl : imgUrl!,
-    //   phone: userModel!.phone,
-    // );
+        FirebaseFirestore.instance.collection('employee');
+
     if (userUpdate == null) {
+      //used when edit userdata in edit screen
       await userCollectionRef.doc(userModel!.id).update(userModel!.toMap());
     } else {
+      //used when add and remove image profile
       await userCollectionRef.doc(userUpdate.id).update(userUpdate.toMap());
-      //print(userUpdate.toMap());
     }
     await getUserData(userModel!.id);
     isLoading.value = false;
     notifyListeners();
   }
 
+  //upload image profile to firebase storage and get url
   Future<String> uploadProfileImage(String? uid, File file) async {
     String imageUrl;
-
     firebase_storage.Reference storageReference = firebase_storage
         .FirebaseStorage.instance
         .ref()
@@ -130,19 +120,16 @@ class AuthProvider with ChangeNotifier {
     return imageUrl;
   }
 
-  void changeShowPassword() {
-    isShowPassword.value = !isShowPassword.value;
-    notifyListeners();
-  }
+  
 
   Future removeProfileImage(String uid) async {
     CollectionReference userCollectionRef =
-        FirebaseFirestore.instance.collection('users');
+        FirebaseFirestore.instance.collection('employee');
     try {
       await firebase_storage.FirebaseStorage.instance
           .ref('userPrefileImage/$uid/imageProfile')
           .delete();
-      await userCollectionRef.doc(userModel!.id).update(UserModel(
+      await userCollectionRef.doc(userModel!.id).update(EmployeeModel(
               id: userModel!.id,
               name: userModel!.name,
               lastName: userModel!.lastName,
@@ -151,6 +138,7 @@ class AuthProvider with ChangeNotifier {
               imageUrl: '',
               phone: userModel!.phone)
           .toMap());
+      //get userData after update userData
       await getUserData(userModel!.id);
     } catch (e) {
       print(e.toString());
@@ -162,10 +150,9 @@ class AuthProvider with ChangeNotifier {
 
     if (pickedFile != null) {
       image = File(pickedFile.path);
-      //save imagefile in db
+      //save imagefile in db and get url
       imgUrl = await uploadProfileImage(userModel!.id, image!);
-      //userModel!.imageUrl = imgUrl!;
-      UserModel _userModel = UserModel(
+      EmployeeModel _userModel = EmployeeModel(
         id: userModel!.id,
         name: userModel!.name,
         lastName: userModel!.lastName,
@@ -174,6 +161,7 @@ class AuthProvider with ChangeNotifier {
         imageUrl: imgUrl == null ? userModel!.imageUrl : imgUrl!,
         phone: userModel!.phone,
       );
+      //update userData
       await updateUserData(userUpdate: _userModel);
       notifyListeners();
     } else {
