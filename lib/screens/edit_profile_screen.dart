@@ -25,8 +25,7 @@ class EditProfileScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("Edit Profile"),
-        centerTitle: true,
-      ),
+             ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -37,10 +36,10 @@ class EditProfileScreen extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   CustomAddTextFormField(
-                    initialValue: valueAuth.userModel!.name,
+                    initialValue: valueAuth.employeeModel!.name,
                     label: 'Name',
                     onSave: (String? val) {
-                      valueAuth.userModel!.name = val!;
+                      valueAuth.employeeModel!.name = val!;
                     },
                     validator: (String? val) {
                       if (val!.isEmpty) {
@@ -53,10 +52,10 @@ class EditProfileScreen extends StatelessWidget {
                     height: 10,
                   ),
                   CustomAddTextFormField(
-                    initialValue: valueAuth.userModel!.lastName,
+                    initialValue: valueAuth.employeeModel!.lastName,
                     label: 'Last Name',
                     onSave: (String? val) {
-                      valueAuth.userModel!.lastName = val!;
+                      valueAuth.employeeModel!.lastName = val!;
                     },
                     validator: (String? val) {
                       if (val!.isEmpty) {
@@ -69,10 +68,10 @@ class EditProfileScreen extends StatelessWidget {
                     height: 10,
                   ),
                   CustomAddTextFormField(
-                    initialValue: valueAuth.userModel!.occupationGroup,
+                    initialValue: valueAuth.employeeModel!.occupationGroup,
                     label: 'Occupation Group',
                     onSave: (String? val) {
-                      valueAuth.userModel!.occupationGroup = val!;
+                      valueAuth.employeeModel!.occupationGroup = val!;
                     },
                     validator: (String? val) {
                       if (val!.isEmpty) {
@@ -85,11 +84,11 @@ class EditProfileScreen extends StatelessWidget {
                     height: 10,
                   ),
                   CustomAddTextFormField(
-                    initialValue: valueAuth.userModel!.phone,
+                    initialValue: valueAuth.employeeModel!.phone,
                     label: 'Phone',
                     keyboardType: TextInputType.number,
                     onSave: (String? val) {
-                      valueAuth.userModel!.phone = val!;
+                      valueAuth.employeeModel!.phone = val!;
                     },
                     validator: (String? val) {
                       if (val!.isEmpty) {

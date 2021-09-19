@@ -232,18 +232,18 @@ class MainProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void changeIsSearch() {
-    isSearch.value = !isSearch.value;
-    notifyListeners();
-  }
+  // void changeIsSearch() {
+  //   isSearch.value = !isSearch.value;
+  //   notifyListeners();
+  // }
 
-  void searchFunction(String val, List list) {
-    searchList = list
-        .where(
-            (element) => element.name.toLowerCase().contains(val.toLowerCase()))
-        .toList();
-    notifyListeners();
-  }
+  // void searchFunction(String val, List list) {
+  //   searchList = list
+  //       .where(
+  //           (element) => element.name.toLowerCase().contains(val.toLowerCase()))
+  //       .toList();
+  //   notifyListeners();
+  // }
 
   Future filterDevices() async {
     devicesNotBookedList =

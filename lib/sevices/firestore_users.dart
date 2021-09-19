@@ -1,5 +1,5 @@
 
-import 'package:booking_app_client/models/user_model.dart';
+import 'package:booking_app_client/models/employee_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirestoreUsers {

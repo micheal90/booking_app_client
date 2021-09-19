@@ -16,9 +16,9 @@ class ProfileImageScreen extends StatelessWidget {
         builder: (context, value, child) => Center(
           
 
-          child: value.userModel!.imageUrl == ''
+          child: value.employeeModel!.imageUrl == ''
               ? Image.asset('assets/images/profile.png')
-              : Image.network(value.userModel!.imageUrl),
+              : Image.network(value.employeeModel!.imageUrl),
         ),
       ),
     );

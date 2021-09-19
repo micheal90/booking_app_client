@@ -55,10 +55,12 @@ class ProfileScreen extends StatelessWidget {
                         title: Text('Remove'),
                         onTap: () async {
                           await valueAuth
-                              .removeProfileImage(valueAuth.userModel!.id);
+                              .removeProfileImage(valueAuth.employeeModel!.id);
+
                           Navigator.pop(context);
                         },
                       ),
+                      if (valueAuth.isLoading.value) CircularProgressIndicator()
                     ],
                   ),
                 ),
@@ -72,7 +74,7 @@ class ProfileScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text('Profile Screen'),
-          centerTitle: true,
+          
           actions: [
             TextButton(
                 onPressed: () => Navigator.of(context).push(
@@ -103,13 +105,13 @@ class ProfileScreen extends StatelessWidget {
                         child: //check if image if  not equal null to show image saved in db
                             ClipRRect(
                                 borderRadius: BorderRadius.circular(100),
-                                child: value.userModel!.imageUrl == ''
+                                child: value.employeeModel!.imageUrl == ''
                                     ? Image.asset(
                                         'assets/images/profile.png',
                                         fit: BoxFit.fill,
                                       )
                                     : Image.network(
-                                        value.userModel!.imageUrl,
+                                        value.employeeModel!.imageUrl,
                                         fit: BoxFit.fill,
                                       ))),
                   ),
@@ -135,18 +137,19 @@ class ProfileScreen extends StatelessWidget {
                 CustomListTileProfile(
                   leading: Icon(Icons.person, color: KPrimaryColor),
                   title: 'Name',
-                  subtitle:
-                      value.userModel!.name + ' ' + value.userModel!.lastName,
+                  subtitle: value.employeeModel!.name +
+                      ' ' +
+                      value.employeeModel!.lastName,
                 ),
                 CustomListTileProfile(
                   leading: Icon(Icons.group_rounded, color: KPrimaryColor),
                   title: 'Occupation Group',
-                  subtitle: value.userModel!.occupationGroup,
+                  subtitle: value.employeeModel!.occupationGroup,
                 ),
                 CustomListTileProfile(
                   leading: Icon(Icons.email, color: KPrimaryColor),
                   title: 'Email',
-                  subtitle: value.userModel!.email,
+                  subtitle: value.employeeModel!.email,
                 ),
                 CustomListTileProfile(
                   leading: Icon(
@@ -154,7 +157,7 @@ class ProfileScreen extends StatelessWidget {
                     color: KPrimaryColor,
                   ),
                   title: 'Phone',
-                  subtitle: value.userModel!.phone,
+                  subtitle: value.employeeModel!.phone,
                 ),
                 SizedBox(
                   height: 30,

@@ -2,23 +2,19 @@ import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class FirebaseStorageImage {
-  Future<List<String>> uploadFiles(List<File> _images, String deviceId) async {
-    var imageUrls = await Future.wait(
-        _images.map((_image) => uploadFile(_image, deviceId)));
-    print(imageUrls);
-    return imageUrls;
-  }
+  
 
-  Future<String> uploadFile(File _image, String deviceId) async {
-    var path = _image.path.split('/').last;
+  Future<String> uploadFile(String? uid, File file) async {
+    String imageUrl;
     firebase_storage.Reference storageReference = firebase_storage
         .FirebaseStorage.instance
         .ref()
-        .child('devicesImages/$deviceId/$path');
-    firebase_storage.UploadTask uploadTask = storageReference.putFile(_image);
-    await uploadTask.whenComplete(() => null);
-
-    return await storageReference.getDownloadURL();
+        .child('userPrefileImage/$uid')
+        .child('imageProfile');
+    firebase_storage.UploadTask uploadTask = storageReference.putFile(file);
+    firebase_storage.TaskSnapshot snapshot = await uploadTask;
+    imageUrl = await snapshot.ref.getDownloadURL();
+    return imageUrl;
   }
 
   Future deleteImageByUrl(String imageUrl) async {

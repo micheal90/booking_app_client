@@ -1,6 +1,5 @@
 import 'package:booking_app_client/providers/auth_provider.dart';
 import 'package:booking_app_client/providers/main_provider.dart';
-import 'package:booking_app_client/screens/book_device_screen.dart';
 import 'package:booking_app_client/screens/login_screen.dart';
 import 'package:booking_app_client/screens/splash_screen.dart';
 import 'package:booking_app_client/screens/veiw_screens/home_screen.dart';
@@ -17,7 +16,7 @@ void main() async {
       ChangeNotifierProxyProvider<AuthProvider, MainProvider>(
           create: (context) => MainProvider(),
           update: (context, value, previous) =>
-              previous!..getReservedDevicesByUserId(value.userModel!.id)),
+              previous!..getReservedDevicesByUserId(value.employeeModel!.id)),
     ],
     child: MyApp(),
   ));

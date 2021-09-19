@@ -1,28 +1,32 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:booking_app_client/models/user_model.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:booking_app_client/models/employee_model.dart';
+import 'package:booking_app_client/sevices/firebase_storage_image.dart';
+import 'package:booking_app_client/sevices/firestore_users.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthProvider with ChangeNotifier {
+  //firebase services
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  FirestoreUsers _firestoreUsers = FirestoreUsers();
+  FirebaseStorageImage _firebaseStorageImage = FirebaseStorageImage();
+
   String? email;
   String? password;
   String? imgUrl;
-  EmployeeModel? userModel;
+  EmployeeModel? employeeModel;
   ValueNotifier<bool> isLoading = ValueNotifier(false);
   final picker = ImagePicker();
   File? image;
 
   bool get isAuth {
     //check if found userData for auto login
-    return userModel != null;
+    return employeeModel != null;
   }
 
   Future logInWithEmail() async {
@@ -35,7 +39,7 @@ class AuthProvider with ChangeNotifier {
         //set user in sharedPreferences
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String userData = json.encode({
-          'email': userModel!.email,
+          'email': employeeModel!.email,
           'userId': userCredential.user!.uid,
         });
         prefs.setString('userData', userData);
@@ -49,10 +53,9 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future getUserData(String userId) async {
-    CollectionReference userCollectionRef =
-        FirebaseFirestore.instance.collection('employee');
-    await userCollectionRef.doc(userId).get().then((userData) {
-      userModel = EmployeeModel.fromMap(userData.data() as Map<String, dynamic>);
+    await _firestoreUsers.getEmployeeData(userId).then((userData) {
+      employeeModel =
+          EmployeeModel.fromMap(userData.data() as Map<String, dynamic>);
       //print('user: ${userModel!.toMap()}');
     });
     notifyListeners();
@@ -62,8 +65,8 @@ class AuthProvider with ChangeNotifier {
   Future setUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String userData = json.encode({
-      'email': userModel!.email,
-      'userId': userModel!.id,
+      'email': employeeModel!.email,
+      'userId': employeeModel!.id,
     });
     prefs.setString('userData', userData);
     print('set User');
@@ -91,55 +94,41 @@ class AuthProvider with ChangeNotifier {
 
   Future updateUserData({EmployeeModel? userUpdate}) async {
     isLoading.value = true;
-    CollectionReference userCollectionRef =
-        FirebaseFirestore.instance.collection('employee');
-
-    if (userUpdate == null) {
+    if(userUpdate == null) {
       //used when edit userdata in edit screen
-      await userCollectionRef.doc(userModel!.id).update(userModel!.toMap());
+      await _firestoreUsers.updateEmployee(employeeModel!);
     } else {
       //used when add and remove image profile
-      await userCollectionRef.doc(userUpdate.id).update(userUpdate.toMap());
+      await _firestoreUsers.updateEmployee(userUpdate);
     }
-    await getUserData(userModel!.id);
+    await getUserData(employeeModel!.id);
     isLoading.value = false;
     notifyListeners();
   }
 
   //upload image profile to firebase storage and get url
-  Future<String> uploadProfileImage(String? uid, File file) async {
-    String imageUrl;
-    firebase_storage.Reference storageReference = firebase_storage
-        .FirebaseStorage.instance
-        .ref()
-        .child('userPrefileImage/$uid')
-        .child('imageProfile');
-    firebase_storage.UploadTask uploadTask = storageReference.putFile(file);
-    firebase_storage.TaskSnapshot snapshot = await uploadTask;
-    imageUrl = await snapshot.ref.getDownloadURL();
-    return imageUrl;
+  Future<String> uploadProfileImage(
+      {required String uid, required File file}) async {
+    return _firebaseStorageImage.uploadFile(uid, file);
   }
 
-  
-
   Future removeProfileImage(String uid) async {
-    CollectionReference userCollectionRef =
-        FirebaseFirestore.instance.collection('employee');
     try {
-      await firebase_storage.FirebaseStorage.instance
-          .ref('userPrefileImage/$uid/imageProfile')
-          .delete();
-      await userCollectionRef.doc(userModel!.id).update(EmployeeModel(
-              id: userModel!.id,
-              name: userModel!.name,
-              lastName: userModel!.lastName,
-              occupationGroup: userModel!.occupationGroup,
-              email: userModel!.email,
-              imageUrl: '',
-              phone: userModel!.phone)
-          .toMap());
+      //delete image from firebase storage
+      await _firebaseStorageImage.deleteImageByUrl(employeeModel!.imageUrl);
+
+      //update userData after remove image
+      await _firestoreUsers.updateEmployee(EmployeeModel(
+          id: employeeModel!.id,
+          name: employeeModel!.name,
+          lastName: employeeModel!.lastName,
+          occupationGroup: employeeModel!.occupationGroup,
+          email: employeeModel!.email,
+          imageUrl: '', //set empty string
+          phone: employeeModel!.phone));
+
       //get userData after update userData
-      await getUserData(userModel!.id);
+      await getUserData(employeeModel!.id);
     } catch (e) {
       print(e.toString());
     }
@@ -151,15 +140,15 @@ class AuthProvider with ChangeNotifier {
     if (pickedFile != null) {
       image = File(pickedFile.path);
       //save imagefile in db and get url
-      imgUrl = await uploadProfileImage(userModel!.id, image!);
+      imgUrl = await uploadProfileImage(uid: employeeModel!.id, file: image!);
       EmployeeModel _userModel = EmployeeModel(
-        id: userModel!.id,
-        name: userModel!.name,
-        lastName: userModel!.lastName,
-        occupationGroup: userModel!.occupationGroup,
-        email: userModel!.email,
-        imageUrl: imgUrl == null ? userModel!.imageUrl : imgUrl!,
-        phone: userModel!.phone,
+        id: employeeModel!.id,
+        name: employeeModel!.name,
+        lastName: employeeModel!.lastName,
+        occupationGroup: employeeModel!.occupationGroup,
+        email: employeeModel!.email,
+        imageUrl: imgUrl == null ? employeeModel!.imageUrl : imgUrl!,
+        phone: employeeModel!.phone,
       );
       //update userData
       await updateUserData(userUpdate: _userModel);

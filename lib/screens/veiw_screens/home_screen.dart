@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:booking_app_client/models/search_models/search_devices.dart';
 import 'package:booking_app_client/providers/main_provider.dart';
 import 'package:booking_app_client/screens/veiw_screens/android_devices_screen.dart';
 import 'package:booking_app_client/screens/veiw_screens/device_details_screen.dart';
@@ -20,7 +21,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  TextEditingController? searchController = TextEditingController();
   Timer? timer;
   @override
   void initState() {
@@ -46,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return DoubleBack(
-          child: RefreshIndicator(
+      child: RefreshIndicator(
         onRefresh: () async =>
             await Provider.of<MainProvider>(context, listen: false)
                 .refreshDevices(),
@@ -54,31 +54,14 @@ class _HomeScreenState extends State<HomeScreen> {
           builder: (context, valueMain, child) => Scaffold(
               appBar: AppBar(
                 //centerTitle: true,
-                title: valueMain.isSearch.value
-                    ? TextField(
-                        autofocus: true,
-                        controller: searchController,
-                        onChanged: (val) => valueMain.searchFunction(
-                            val, valueMain.devicesNotBookedList),
-                        decoration: InputDecoration(
-                            hintStyle: TextStyle(color: Colors.white),
-                            hintText: " Search...",
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.all(10)),
-                        cursorColor: Colors.white,
-                        style: TextStyle(color: Colors.white),
-                      )
-                    : Text("Booking App Employee"),
+                title: Text("Booking App Employee"),
                 actions: [
                   IconButton(
                       icon: valueMain.isSearch.value
                           ? Icon(Icons.cancel_outlined)
                           : Icon(Icons.search),
-                      onPressed: () {
-                        valueMain.changeIsSearch();
-                        searchController!.clear();
-                        valueMain.searchList = [];
-                      })
+                      onPressed: () => showSearch(
+                          context: context, delegate: SearchDevices()))
                 ],
               ),
               body: Padding(
@@ -98,7 +81,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         GestureDetector(
                           onTap: () => Navigator.of(context).push(
                               MaterialPageRoute(
-                                  builder: (context) => AndroidDevicesScreen())),
+                                  builder: (context) =>
+                                      AndroidDevicesScreen())),
                           child: CategoryWidget(
                             text: valueMain.categories[0].name,
                             imageUrl: valueMain.categories[0].imageUrl,
@@ -178,18 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisSpacing: 10,
           //mainAxisExtent: 200,
           mainAxisSpacing: 10),
-      itemBuilder: (context, index) => searchController!.text.isNotEmpty
-          ? GestureDetector(
-              onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) => DeviceDetailsScreen(
-                      deviceId: value.searchList[index].id))),
-              child: DeviceItemView(
-                  imageUrl: value.searchList[index].imgUrl[0],
-                  name: value.searchList[index].name,
-                  available: value.searchList[index].isBooked,
-                  screenSize: value.searchList[index].screenSize),
-            )
-          : GestureDetector(
+      itemBuilder: (context, index) =>  GestureDetector(
               onTap: () => Navigator.of(context).push(MaterialPageRoute(
                   builder: (_) => DeviceDetailsScreen(
                       deviceId: value.devicesNotBookedList[index].id))),
@@ -199,9 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   available: value.devicesNotBookedList[index].isBooked,
                   screenSize: value.devicesNotBookedList[index].screenSize),
             ),
-      itemCount: searchController!.text.isNotEmpty
-          ? value.searchList.length
-          : value.devicesNotBookedList.length,
+      itemCount:  value.devicesNotBookedList.length,
     );
   }
 }

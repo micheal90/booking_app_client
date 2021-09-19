@@ -3,8 +3,10 @@ import 'package:booking_app_client/providers/main_provider.dart';
 import 'package:booking_app_client/screens/book_device_screen.dart';
 import 'package:booking_app_client/widgets_model/custom_container_device_details.dart';
 import 'package:booking_app_client/widgets_model/custom_elevated_button.dart';
+import 'package:booking_app_client/widgets_model/custom_text.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 
 import 'package:provider/provider.dart';
 
@@ -43,7 +45,8 @@ class _DeviceDetailsScreenState extends State<DeviceDetailsScreen> {
               title: Text(
                 deviceModel!.name,
                 style: TextStyle(
-                    color: Colors.white,),
+                  color: Colors.white,
+                ),
               ),
               background: CarouselSlider.builder(
                   itemCount: deviceModel!.imageUrl.length,
@@ -123,7 +126,15 @@ class _DeviceDetailsScreenState extends State<DeviceDetailsScreen> {
                   height: 40,
                 ),
                 deviceModel!.isBooked
-                    ? Container()
+                    ? Container(
+                        child: CustomText(
+                          text: 'The device is reserved now',
+                          alignment: Alignment.center,
+                          fontSize: 22,
+                          color: Colors.red.shade500,
+                          fontWeight:FontWeight.w700
+                        ),
+                      )
                     : Container(
                         child: CustomElevatedButton(
                           text: 'Book',

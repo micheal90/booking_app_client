@@ -37,24 +37,17 @@ class MainDrawer extends StatelessWidget {
                         child: //check if image if  not equal null to show image saved in db
                             ClipRRect(
                                 borderRadius: BorderRadius.circular(100),
-                                child: valueAuth.userModel!.imageUrl == ''
+                                child: valueAuth.employeeModel!.imageUrl == ''
                                     ? Image.asset(
                                         'assets/images/profile.png',
                                         fit: BoxFit.fill,
                                       )
                                     : Image.network(
-                                        valueAuth.userModel!.imageUrl,
+                                        valueAuth.employeeModel!.imageUrl,
                                         fit: BoxFit.fill,
                                       ))),
-                    // CustomText(
-                    //   text:
-                    //       '${valueAuth.userModel!.name} ${valueAuth.userModel!.lastName}',
-                    //   fontSize: 20,
-                    //   color: Colors.white,
-                    // ),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
-
                       children: [
                         CustomText(
                           text: 'Employee App',
@@ -71,7 +64,7 @@ class MainDrawer extends StatelessWidget {
                             CustomText(
                               color: Colors.white,
                               text:
-                                  '${valueAuth.userModel!.name} ${valueAuth.userModel!.lastName}',
+                                  '${valueAuth.employeeModel!.name} ${valueAuth.employeeModel!.lastName}',
                             ),
                           ],
                         ),
