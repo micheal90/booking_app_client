@@ -5,6 +5,7 @@ import 'package:booking_app_client/widgets_model/custom_elevated_button.dart';
 import 'package:booking_app_client/widgets_model/custom_text.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_utils/src/extensions/internacionalization.dart';
 
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -40,7 +41,7 @@ class _BookDeviceScreenState extends State<BookDeviceScreen> {
         value.endDateTime == null ||
         value.endDateTime!.isBefore(value.startDateTime!)) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Please select a valid date'),
+        content: Text('Please select a valid date'.tr),
         backgroundColor: Colors.black54,
       ));
     } else {
@@ -68,7 +69,7 @@ class _BookDeviceScreenState extends State<BookDeviceScreen> {
             isLoading = false;
           });
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('The device is booked'),
+            content: Text('The device is booked'.tr),
             backgroundColor: Colors.black54,
           ));
         }
@@ -141,23 +142,23 @@ class _BookDeviceScreenState extends State<BookDeviceScreen> {
                   color: KPrimaryColor,
                 ),
                 CustomText(
-                  text: 'Type: ' + deviceModel.type,
+                  text: 'Type: '.tr + deviceModel.type,
                   color: Colors.grey,
                 ),
                 CustomText(
-                  text: 'Model: ' + deviceModel.model,
+                  text: 'Model: '.tr + deviceModel.model,
                   color: Colors.grey,
                 ),
                 CustomText(
-                  text: 'OS: ' + deviceModel.os,
+                  text: 'OS: '.tr + deviceModel.os,
                   color: Colors.grey,
                 ),
                 CustomText(
-                  text: 'ScreenSize: ' + deviceModel.screenSize,
+                  text: 'ScreenSize: '.tr + deviceModel.screenSize,
                   color: Colors.grey,
                 ),
                 CustomText(
-                  text: 'Battery: ' + deviceModel.battery,
+                  text: 'Battery: '.tr + deviceModel.battery,
                   color: Colors.grey,
                 ),
               ],
@@ -166,7 +167,7 @@ class _BookDeviceScreenState extends State<BookDeviceScreen> {
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: CustomText(
-              text: 'Device Reservation Schedule',
+              text: 'Device Reservation Schedule'.tr,
               fontSize: 18,
               alignment: Alignment.center,
             ),
@@ -179,7 +180,7 @@ class _BookDeviceScreenState extends State<BookDeviceScreen> {
                 Container(
                   width: MediaQuery.of(context).size.width * 0.25,
                   child: CustomText(
-                    text: 'Device',
+                    text: 'Device'.tr,
                     color: KPrimaryColor,
                     alignment: Alignment.center,
                   ),
@@ -187,7 +188,7 @@ class _BookDeviceScreenState extends State<BookDeviceScreen> {
                 Container(
                   width: MediaQuery.of(context).size.width * 0.25,
                   child: CustomText(
-                    text: 'From',
+                    text: 'From'.tr,
                     color: KPrimaryColor,
                     alignment: Alignment.center,
                   ),
@@ -195,7 +196,7 @@ class _BookDeviceScreenState extends State<BookDeviceScreen> {
                 Container(
                   width: MediaQuery.of(context).size.width * 0.25,
                   child: CustomText(
-                    text: 'To',
+                    text: 'To'.tr,
                     color: KPrimaryColor,
                     alignment: Alignment.center,
                   ),
@@ -223,7 +224,7 @@ class _BookDeviceScreenState extends State<BookDeviceScreen> {
                         }),
                     icon: Icon(Icons.date_range),
                     label: CustomText(
-                      text: 'From',
+                      text: 'From'.tr ,
                     )),
                 CustomText(
                     color: KPrimaryColor,
@@ -255,7 +256,7 @@ class _BookDeviceScreenState extends State<BookDeviceScreen> {
                         }),
                     icon: Icon(Icons.date_range),
                     label: CustomText(
-                      text: 'To',
+                      text: 'To'.tr,
                     )),
                 CustomText(
                     color: KPrimaryColor,
@@ -278,7 +279,7 @@ class _BookDeviceScreenState extends State<BookDeviceScreen> {
                   child: isLoading
                       ? CircularProgressIndicator()
                       : CustomElevatedButton(
-                          text: 'Book',
+                          text: 'Book'.tr,
                           onPressed: () => bookDevice(context, valueMain),
                         ),
                 ),
@@ -303,7 +304,7 @@ class _BookDeviceScreenState extends State<BookDeviceScreen> {
           ? Center(
               child: CustomText(
                 alignment: Alignment.center,
-                text: 'There is no reservation for this device yet',
+                text: 'There is no reservation for this device yet'.tr,
               ),
             )
           : ListView.separated(

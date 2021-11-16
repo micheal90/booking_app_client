@@ -6,6 +6,7 @@ import 'package:booking_app_client/widgets_model/custom_text.dart';
 import 'package:booking_app_client/widgets_model/main_drawer.dart';
 import 'package:double_back_to_close/double_back_to_close.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -16,13 +17,13 @@ class MyScheduleReservationScreen extends StatelessWidget {
           child: Consumer<MainProvider>(
         builder: (context, valueMain, child) => Scaffold(
           appBar: AppBar(
-            title: Text('My Schedule Reservation'),
+            title: Text('My Schedule Reservation'.tr),
             // centerTitle: true,
           ),
           body: valueMain.scheduleOrder.isEmpty
               ? Center(
                   child: CustomText(
-                    text: 'No reservation yet',
+                    text: 'No reservation yet'.tr,
                     fontSize: 22,
                     alignment: Alignment.center,
                   ),
@@ -42,10 +43,10 @@ class MyScheduleReservationScreen extends StatelessWidget {
                               child: Text(valueMain.scheduleOrder[index].type),
                             )),
                           ),
-                          subtitle: 'From: ' +
+                          subtitle: 'From: '.tr +
                               DateFormat().add_yMd().format(DateTime.parse(
                                   valueMain.scheduleOrder[index].startDate)) +
-                              '\nTo: ' +
+                              '\n'+'To: '.tr +
                               DateFormat().add_yMd().format(DateTime.parse(
                                   valueMain.scheduleOrder[index].endDate)),
                           subtitleColor: Colors.grey,
@@ -56,8 +57,8 @@ class MyScheduleReservationScreen extends StatelessWidget {
                               showDialog(
                                   context: context,
                                   builder: (context) => CustomAlertDialog(
-                                        title: 'Are you sure!',
-                                        content: 'Remove the reservation ?',
+                                        title: 'Are you sure!'.tr,
+                                        content: 'Remove the reservation ?'.tr,
                                         onPressedYes: () {
                                           valueMain
                                               .deleteOrderReservation(

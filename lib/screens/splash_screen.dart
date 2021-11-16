@@ -33,7 +33,7 @@ class SplashScreen extends StatelessWidget {
                     ),
                     CustomText(
                       text: 'Booking App\nEmployee',
-                      alignment: Alignment.center,
+                       alignment: Alignment.center,
                       fontSize: 30,
                       fontWeight: FontWeight.w700,
                       textAlign: TextAlign.center,

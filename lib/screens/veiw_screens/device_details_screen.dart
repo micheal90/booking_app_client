@@ -7,6 +7,7 @@ import 'package:booking_app_client/widgets_model/custom_text.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:get/get_utils/src/extensions/internacionalization.dart';
 
 import 'package:provider/provider.dart';
 
@@ -91,35 +92,35 @@ class _DeviceDetailsScreenState extends State<DeviceDetailsScreen> {
                   height: 20,
                 ),
                 CustomContainerDeviceDetail(
-                  title: 'Type',
+                  title: 'Type'.tr,
                   detail: deviceModel!.type.toUpperCase(),
                 ),
                 SizedBox(
                   height: 5,
                 ),
                 CustomContainerDeviceDetail(
-                  title: 'Model',
+                  title: 'Model'.tr,
                   detail: deviceModel!.model.toUpperCase(),
                 ),
                 SizedBox(
                   height: 5,
                 ),
                 CustomContainerDeviceDetail(
-                  title: 'OS',
+                  title: 'OS'.tr,
                   detail: deviceModel!.os.toUpperCase(),
                 ),
                 SizedBox(
                   height: 5,
                 ),
                 CustomContainerDeviceDetail(
-                  title: 'Screen Size',
+                  title: 'Screen Size'.tr,
                   detail: deviceModel!.screenSize.toUpperCase(),
                 ),
                 SizedBox(
                   height: 5,
                 ),
                 CustomContainerDeviceDetail(
-                  title: 'Battery',
+                  title: 'Battery'.tr,
                   detail: deviceModel!.battery.toUpperCase(),
                 ),
                 SizedBox(
@@ -128,7 +129,7 @@ class _DeviceDetailsScreenState extends State<DeviceDetailsScreen> {
                 deviceModel!.isBooked
                     ? Container(
                         child: CustomText(
-                          text: 'The device is reserved now',
+                          text: 'The device is reserved now'.tr,
                           alignment: Alignment.center,
                           fontSize: 22,
                           color: Colors.red.shade500,
@@ -137,7 +138,7 @@ class _DeviceDetailsScreenState extends State<DeviceDetailsScreen> {
                       )
                     : Container(
                         child: CustomElevatedButton(
-                          text: 'Book',
+                          text: 'Book'.tr,
                           onPressed: () =>
                               Navigator.of(context).push(MaterialPageRoute(
                             builder: (_) =>

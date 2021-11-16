@@ -6,6 +6,7 @@ import 'package:booking_app_client/widgets_model/device_item_view.dart';
 import 'package:booking_app_client/widgets_model/main_drawer.dart';
 import 'package:double_back_to_close/double_back_to_close.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:provider/provider.dart';
 
 class AllDevicesScreen extends StatelessWidget {
@@ -16,7 +17,7 @@ class AllDevicesScreen extends StatelessWidget {
         builder: (context, valueMain, child) => Scaffold(
           appBar: AppBar(
             // centerTitle: true,
-            title: Text('All Devices'),
+            title: Text('All Devices'.tr),
             actions: [
               IconButton(
                   icon: valueMain.isSearch.value
@@ -29,7 +30,7 @@ class AllDevicesScreen extends StatelessWidget {
           body: valueMain.allDevicesList.isEmpty
               ? Center(
                   child: CustomText(
-                    text: 'No devices',
+                    text: 'No devices'.tr,
                     alignment: Alignment.center,
                     fontSize: 22,
                   ),

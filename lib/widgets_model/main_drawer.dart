@@ -4,9 +4,12 @@ import 'package:booking_app_client/screens/my_reserved_devices_screen.dart';
 import 'package:booking_app_client/screens/my_schedule_reservation.dart';
 import 'package:booking_app_client/screens/veiw_screens/all_devices_screen.dart';
 import 'package:booking_app_client/screens/veiw_screens/home_screen.dart';
+import 'package:booking_app_client/util/langs/translate_controller.dart';
 import 'package:booking_app_client/widgets_model/custom_list_tile.dart';
 import 'package:booking_app_client/widgets_model/custom_text.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:provider/provider.dart';
 
 class MainDrawer extends StatelessWidget {
@@ -33,7 +36,8 @@ class MainDrawer extends StatelessWidget {
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(100),
                             color: Colors.grey,
-                            border: Border.all(color: Colors.grey)),
+                            border:
+                                Border.all(color: Colors.black26, width: 3)),
                         child: //check if image if  not equal null to show image saved in db
                             ClipRRect(
                                 borderRadius: BorderRadius.circular(100),
@@ -60,7 +64,7 @@ class MainDrawer extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             CustomText(
-                                text: 'Logged as ', color: Colors.red[700]),
+                                text: 'Logged as '.tr, color: Colors.red[700]),
                             CustomText(
                               color: Colors.white,
                               text:
@@ -78,13 +82,13 @@ class MainDrawer extends StatelessWidget {
             CustomListTile(
               onTap: () => Navigator.of(context).pushReplacement(
                   MaterialPageRoute(builder: (context) => HomeScreen())),
-              title: 'Available devices',
+              title: 'Available devices'.tr,
               leading: Icon(Icons.devices),
             ),
             CustomListTile(
               onTap: () => Navigator.of(context).pushReplacement(
                   MaterialPageRoute(builder: (context) => AllDevicesScreen())),
-              title: 'All devices',
+              title: 'All Devices'.tr,
               leading: Icon(Icons.apps),
             ),
             Divider(),
@@ -112,20 +116,47 @@ class MainDrawer extends StatelessWidget {
                 onTap: () => Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
                         builder: (context) => MyScheduleReservationScreen())),
-                title: 'My Schedule Reservation',
+                title: 'My Schedule Reservation'.tr,
                 leading: Icon(Icons.schedule)),
             CustomListTile(
                 onTap: () => Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
                         builder: (context) => MyReservedDevicesScreen())),
-                title: 'My Reserved Devices',
+                title: 'My Reserved Devices'.tr,
                 leading: Icon(Icons.mobile_friendly)),
             CustomListTile(
               onTap: () => Navigator.of(context).pushReplacement(
                   MaterialPageRoute(builder: (context) => ProfileScreen())),
-              title: 'Profile',
+              title: 'Profile'.tr,
               leading: Icon(Icons.person),
             ),
+            GetBuilder<TranslateController>(
+              init: Get.find<TranslateController>(),
+              builder: (controller) => ListTile(
+                leading: Icon(Icons.language),
+                title: Row(children: [
+                  CustomText(
+                      text: 'English'.tr,
+                    ),
+                    Radio(
+                        value: 'en',
+                        groupValue: controller.selectedLang,
+                        onChanged: (String? lang) =>
+                            controller.changeLanguage(lang!)),
+                   
+                    CustomText(
+                      text: 'Arabic'.tr,
+                    ),
+                    Radio(
+                      value: 'ar',
+                      groupValue: controller.selectedLang,
+                      onChanged: (String? lang) =>
+                          controller.changeLanguage(lang!),
+                    )
+                ],),
+              ),
+            ),
+           
           ],
         ),
       ),

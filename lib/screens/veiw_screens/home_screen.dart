@@ -13,6 +13,7 @@ import 'package:booking_app_client/widgets_model/gatecory_widget.dart';
 import 'package:booking_app_client/widgets_model/main_drawer.dart';
 import 'package:double_back_to_close/double_back_to_close.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -68,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: Column(children: [
                     CustomText(
-                      text: 'Categories',
+                      text: 'Categories'.tr,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
@@ -121,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       height: 15,
                     ),
                     CustomText(
-                      text: 'Recent Add',
+                      text: 'Recent Add'.tr,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),

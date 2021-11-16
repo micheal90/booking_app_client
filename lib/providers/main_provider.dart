@@ -4,6 +4,7 @@ import 'package:booking_app_client/models/reserve_device_model.dart';
 import 'package:booking_app_client/sevices/firestore_device.dart';
 import 'package:booking_app_client/sevices/firestore_reserve_devices.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_utils/src/extensions/internacionalization.dart';
 
 class MainProvider with ChangeNotifier {
   // List<DeviceModel> allDevicesList = [
@@ -82,19 +83,19 @@ class MainProvider with ChangeNotifier {
   // ];
   List<CatergoryModel> categories = [
     CatergoryModel(
-        name: 'Android',
+        name: 'ANDROID'.tr,
         imageUrl:
             'https://firebasestorage.googleapis.com/v0/b/booking-app-d737d.appspot.com/o/categoriesIcons%2Fandroid96.png?alt=media&token=04dfd03d-2494-48f9-95fe-1f1af390f2c7'),
     CatergoryModel(
-        name: 'IOS',
+        name: 'IOS'.tr,
         imageUrl:
             'https://firebasestorage.googleapis.com/v0/b/booking-app-d737d.appspot.com/o/categoriesIcons%2Fios-96.png?alt=media&token=9fdeb72c-e35e-4d29-a78e-305361fb0b3d'),
     CatergoryModel(
-        name: 'PC',
+        name: 'PC'.tr,
         imageUrl:
             'https://firebasestorage.googleapis.com/v0/b/booking-app-d737d.appspot.com/o/categoriesIcons%2Fpc-96.png?alt=media&token=30326472-db66-4374-aa8e-153bef4587a7'),
     CatergoryModel(
-        name: 'Others',
+        name: 'OTHERS'.tr,
         imageUrl:
             'https://firebasestorage.googleapis.com/v0/b/booking-app-d737d.appspot.com/o/categoriesIcons%2Fothers-96.png?alt=media&token=b95ea046-d22c-46c5-b782-a17303832320'),
   ];
@@ -250,7 +251,7 @@ class MainProvider with ChangeNotifier {
         allDevicesList.where((element) => !element.isBooked).toList();
     androidDevicesList = allDevicesList
         .where((element) =>
-            (element.type == 'Android' && element.isBooked == false))
+            (element.type == 'ANDROID' && element.isBooked == false))
         .toList();
     iosDevicesList = allDevicesList
         .where(

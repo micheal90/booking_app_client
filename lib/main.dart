@@ -3,8 +3,12 @@ import 'package:booking_app_client/providers/main_provider.dart';
 import 'package:booking_app_client/screens/login_screen.dart';
 import 'package:booking_app_client/screens/splash_screen.dart';
 import 'package:booking_app_client/screens/veiw_screens/home_screen.dart';
+import 'package:booking_app_client/util/langs/translate_controller.dart';
+import 'package:booking_app_client/util/langs/translation.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -28,15 +32,23 @@ class MyApp extends StatelessWidget {
     return FutureBuilder(
       future: Future.delayed(Duration(seconds: 2)),
       builder: (context, snapshot) => Consumer<AuthProvider>(
-        builder: (context, valueAuth, child) => MaterialApp(
+        builder: (context, valueAuth, child) => GetMaterialApp(
+          //initialBinding: AppBindings(),
+          translations: Translation(),
+          locale: Translation.local,
+          fallbackLocale: Translation.fallbackLocal,
           title: 'Booking App Employee',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
-              primarySwatch: Colors.blue,
-              appBarTheme: AppBarTheme(
-                titleSpacing: 0,
-              )),
-              
+            primarySwatch: Colors.blue,
+            appBarTheme: AppBarTheme(
+              titleSpacing: 0,
+              centerTitle: true,
+            ),
+          ),
+          textDirection: Get.put(TranslateController()).selectedLang == 'en'
+              ? TextDirection.ltr
+              : TextDirection.rtl,
           home: snapshot.connectionState == ConnectionState.waiting
               ? SplashScreen()
               : valueAuth.isAuth

@@ -6,6 +6,7 @@ import 'package:booking_app_client/widgets_model/custom_text.dart';
 import 'package:booking_app_client/widgets_model/main_drawer.dart';
 import 'package:double_back_to_close/double_back_to_close.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -16,7 +17,7 @@ class MyReservedDevicesScreen extends StatelessWidget {
           child: Consumer<MainProvider>(
         builder: (context, valueMain, child) => Scaffold(
           appBar: AppBar(
-            title: Text('My Reserved Devices'),
+            title: Text('My Reserved Devices'.tr),
             // centerTitle: true,
           ),
           body: valueMain.isLoading.value
@@ -26,7 +27,7 @@ class MyReservedDevicesScreen extends StatelessWidget {
               : valueMain.reservedDevicesList.isEmpty
                   ? Center(
                       child: CustomText(
-                        text: 'No device reserved yet',
+                        text: 'No reservation yet'.tr,
                         fontSize: 22,
                         alignment: Alignment.center,
                       ),
@@ -44,11 +45,11 @@ class MyReservedDevicesScreen extends StatelessWidget {
                                     valueMain.reservedDevicesList[index].type),
                               )),
                             ),
-                            subtitle: 'From: ' +
+                            subtitle: 'From: '.tr +
                                 DateFormat().add_yMd().format(DateTime.parse(
                                     valueMain
                                         .reservedDevicesList[index].startDate)) +
-                                '\nTo: ' +
+                                '\n'+'To: '.tr +
                                 DateFormat().add_yMd().format(DateTime.parse(
                                     valueMain
                                         .reservedDevicesList[index].endDate)),
@@ -60,8 +61,8 @@ class MyReservedDevicesScreen extends StatelessWidget {
                                 showDialog(
                                     context: context,
                                     builder: (context) => CustomAlertDialog(
-                                          title: 'Are you sure!',
-                                          content: 'Remove the reservation ?',
+                                          title: 'Are you sure!'.tr,
+                                          content: 'Remove the reservation ?'.tr,
                                           onPressedYes: () {
                                             valueMain
                                                 .unBookedDevice(valueMain

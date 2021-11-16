@@ -3,6 +3,7 @@ import 'package:booking_app_client/screens/veiw_screens/device_details_screen.da
 import 'package:booking_app_client/widgets_model/custom_text.dart';
 import 'package:booking_app_client/widgets_model/device_item_view.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:provider/provider.dart';
 
 class PcDevicesScreen extends StatelessWidget {
@@ -16,7 +17,7 @@ class PcDevicesScreen extends StatelessWidget {
         body: valueMain.pcDevicesList.isEmpty
             ? Center(
                 child: CustomText(
-                  text: 'No devices',
+                  text: 'No devices'.tr,
                   alignment: Alignment.center,
                   fontSize: 22,
                 ),

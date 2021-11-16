@@ -7,6 +7,7 @@ import 'package:booking_app_client/widgets_model/custom_text.dart';
 import 'package:booking_app_client/widgets_model/main_drawer.dart';
 import 'package:double_back_to_close/double_back_to_close.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -19,7 +20,7 @@ class ProfileScreen extends StatelessWidget {
         context: context,
         builder: (context) => Consumer<AuthProvider>(
               builder: (context, valueAuth, child) => AlertDialog(
-                title: Text('Choose the profile image'),
+                title: Text('Choose the profile image'.tr),
                 content: Container(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -30,7 +31,7 @@ class ProfileScreen extends StatelessWidget {
                           Icons.camera,
                           color: KPrimaryColor,
                         ),
-                        title: Text('From Camera'),
+                        title: Text('From Camera'.tr),
                         onTap: () async {
                           await valueAuth.pickImage(ImageSource.camera);
                           Navigator.pop(context);
@@ -41,7 +42,7 @@ class ProfileScreen extends StatelessWidget {
                           Icons.photo_library,
                           color: KPrimaryColor,
                         ),
-                        title: Text('From Gallery'),
+                        title: Text('From Gallery'.tr),
                         onTap: () async {
                           await valueAuth.pickImage(ImageSource.gallery);
                           Navigator.pop(context);
@@ -52,7 +53,7 @@ class ProfileScreen extends StatelessWidget {
                           Icons.image_not_supported,
                           color: KPrimaryColor,
                         ),
-                        title: Text('Remove'),
+                        title: Text('Remove'.tr),
                         onTap: () async {
                           await valueAuth
                               .removeProfileImage(valueAuth.employeeModel!.id);
@@ -74,7 +75,6 @@ class ProfileScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text('Profile Screen'),
-          
           actions: [
             TextButton(
                 onPressed: () => Navigator.of(context).push(
@@ -101,7 +101,7 @@ class ProfileScreen extends StatelessWidget {
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(100),
                             color: Colors.grey,
-                            border: Border.all(color: Colors.grey)),
+                            border: Border.all(color: Colors.blue, width: 3)),
                         child: //check if image if  not equal null to show image saved in db
                             ClipRRect(
                                 borderRadius: BorderRadius.circular(100),
@@ -122,7 +122,8 @@ class ProfileScreen extends StatelessWidget {
                         //padding: EdgeInsets.all(6),
                         decoration: BoxDecoration(
                             color: Colors.grey.shade300,
-                            borderRadius: BorderRadius.circular(40)),
+                            borderRadius: BorderRadius.circular(40),
+                            border: Border.all(color: Colors.grey)),
                         child: IconButton(
                           onPressed: () {
                             pickedDialog(context);

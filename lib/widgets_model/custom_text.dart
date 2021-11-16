@@ -1,15 +1,17 @@
+import 'package:booking_app_client/util/langs/translate_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class CustomText extends StatelessWidget {
- final String? text;
- final double fontSize;
- final Color? color;
- final Alignment alignment;
- final FontWeight? fontWeight;
-final  TextOverflow? overflow;
- final double? height;
- final int? maxLines;
- final TextAlign? textAlign;
+  final String? text;
+  final double fontSize;
+  final Color? color;
+  final Alignment alignment;
+  final FontWeight? fontWeight;
+  final TextOverflow? overflow;
+  final double? height;
+  final int? maxLines;
+  final TextAlign? textAlign;
 
   CustomText(
       {this.text = "",
@@ -24,17 +26,24 @@ final  TextOverflow? overflow;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      alignment: alignment,
-      child: Text(text!,
-          overflow: overflow,
-          textAlign: textAlign,
-          maxLines: maxLines,
-          style: TextStyle(
-              fontSize: fontSize,
-              fontWeight: fontWeight,
-              color: color,
-              height: height)),
+    return GetBuilder<TranslateController>(
+      init: Get.find<TranslateController>(),
+      builder: (controller) => Container(
+        alignment: alignment == Alignment.centerLeft
+            ? controller.selectedLang == 'en'
+                ? Alignment.centerLeft
+                : Alignment.centerRight
+            : alignment,
+        child: Text(text!,
+            overflow: overflow,
+            textAlign: textAlign,
+            maxLines: maxLines,
+            style: TextStyle(
+                fontSize: fontSize,
+                fontWeight: fontWeight,
+                color: color,
+                height: height)),
+      ),
     );
   }
 }

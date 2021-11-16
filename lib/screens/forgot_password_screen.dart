@@ -1,4 +1,4 @@
-import 'package:booking_app_client/screens/veiw_screens/home_screen.dart';
+import 'package:get/get_utils/src/extensions/internacionalization.dart';
 
 import '../widgets_model/custom_elevated_button.dart';
 import '../widgets_model/custom_text.dart';
@@ -27,7 +27,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                 children: [
                   SizedBox(height: 60),
                   CustomText(
-                    text: 'Reset Password',
+                    text: 'Reset Password'.tr,
                     color: Colors.white,
                     fontSize: 33,
                     alignment: Alignment.center,
@@ -59,7 +59,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                           ),
                           CustomText(
                             text:
-                                'Enter your email address below to reset password ',
+                                 'Enter your email address to reset password'.tr,
                             color: Colors.grey,
                             alignment: Alignment.center,
                             fontSize: 22,
@@ -70,7 +70,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                           ),
                           CustomTextFormField(
                               controller: _emailController,
-                              label: 'Email',
+                              label: 'Email'.tr,
                               hint: 'example@gmail.com',
                               isPassword: false,
                               prefixIcon: Icons.email,
@@ -78,11 +78,11 @@ class ForgotPasswordScreen extends StatelessWidget {
                               type: TextInputType.emailAddress,
                               validate: (String? val) {
                                 if (val!.isEmpty || !val.contains('@')) {
-                                  return "Enter a valid email";
+                                  return "Enter a valid email".tr;
                                 }
                                 return null;
                               },
-                              onSave: (value) {
+                              onSave: (String? value) {
                                 print('Email: $value');
                               }),
                           SizedBox(
@@ -92,13 +92,11 @@ class ForgotPasswordScreen extends StatelessWidget {
                             height: 10,
                           ),
                           CustomElevatedButton(
-                            text: 'RESET PASSWORD',
+                            text: 'RESET PASSWORD'.tr,
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
                                 _formKey.currentState!.save();
-                                Navigator.of(context).pushReplacement(
-                                    MaterialPageRoute(
-                                        builder: (context) => HomeScreen()));
+                                Navigator.of(context).pop();
                               }
                             },
                           )
