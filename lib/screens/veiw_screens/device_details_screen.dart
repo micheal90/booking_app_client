@@ -6,7 +6,6 @@ import 'package:booking_app_client/widgets_model/custom_elevated_button.dart';
 import 'package:booking_app_client/widgets_model/custom_text.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
 import 'package:get/get_utils/src/extensions/internacionalization.dart';
 
 import 'package:provider/provider.dart';

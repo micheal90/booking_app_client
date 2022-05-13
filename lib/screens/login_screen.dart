@@ -9,7 +9,6 @@ import 'package:double_back_to_close/double_back_to_close.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:provider/provider.dart';
 
 import '../constants.dart';

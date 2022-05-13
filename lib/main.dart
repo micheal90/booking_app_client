@@ -1,3 +1,4 @@
+import 'package:booking_app_client/firebase_options.dart';
 import 'package:booking_app_client/providers/auth_provider.dart';
 import 'package:booking_app_client/providers/main_provider.dart';
 import 'package:booking_app_client/screens/login_screen.dart';
@@ -8,12 +9,11 @@ import 'package:booking_app_client/util/langs/translation.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider.value(value: AuthProvider()),
@@ -22,15 +22,17 @@ void main() async {
           update: (context, value, previous) =>
               previous!..getReservedDevicesByUserId(value.employeeModel!.id)),
     ],
-    child: MyApp(),
+    child: const MyApp(),
   ));
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: Future.delayed(Duration(seconds: 2)),
+      future: Future.delayed(const Duration(seconds: 2)),
       builder: (context, snapshot) => Consumer<AuthProvider>(
         builder: (context, valueAuth, child) => GetMaterialApp(
           //initialBinding: AppBindings(),
@@ -41,7 +43,7 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             primarySwatch: Colors.blue,
-            appBarTheme: AppBarTheme(
+            appBarTheme: const AppBarTheme(
               titleSpacing: 0,
               centerTitle: true,
             ),
@@ -50,14 +52,14 @@ class MyApp extends StatelessWidget {
               ? TextDirection.ltr
               : TextDirection.rtl,
           home: snapshot.connectionState == ConnectionState.waiting
-              ? SplashScreen()
+              ? const SplashScreen()
               : valueAuth.isAuth
                   ? HomeScreen()
                   : FutureBuilder(
                       future: valueAuth.tryAutoLogIn(),
                       builder: (context, snapshot) =>
                           snapshot.connectionState == ConnectionState.waiting
-                              ? SplashScreen()
+                              ? const SplashScreen()
                               : LoginScreen(),
                     ),
         ),

@@ -29,19 +29,18 @@ class CustomAlertDialog extends StatelessWidget {
           CustomText(
             text: content,
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-               TextButton(
+              TextButton(
                   onPressed: onPressedNo,
                   child: CustomText(text: 'No', color: KPrimaryColor)),
               TextButton(
                   onPressed: onPressedYes,
                   child: CustomText(text: 'Yes', color: KPrimaryColor)),
-             
             ],
           )
         ],

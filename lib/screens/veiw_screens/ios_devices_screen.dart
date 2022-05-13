@@ -7,14 +7,12 @@ import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:provider/provider.dart';
 
 class IosDevicesScreen extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Consumer<MainProvider>(
       builder: (context, valueMain, child) => Scaffold(
         appBar: AppBar(
-          title: Text("IOS Devices"),
-          
+          title: const Text("IOS Devices"),
         ),
         body: valueMain.iosDevicesList.isEmpty
             ? Center(
@@ -25,15 +23,15 @@ class IosDevicesScreen extends StatelessWidget {
                 ),
               )
             : Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 1,
-                crossAxisSpacing: 10,
-                mainAxisExtent: 200,
-                mainAxisSpacing: 10),
-            itemBuilder: (context, index) =>  GestureDetector(
+                padding: const EdgeInsets.all(10.0),
+                child: GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 1,
+                      crossAxisSpacing: 10,
+                      mainAxisExtent: 200,
+                      mainAxisSpacing: 10),
+                  itemBuilder: (context, index) => GestureDetector(
                     onTap: () => Navigator.of(context).push(MaterialPageRoute(
                         builder: (_) => DeviceDetailsScreen(
                             deviceId: valueMain.iosDevicesList[index].id))),
@@ -43,9 +41,9 @@ class IosDevicesScreen extends StatelessWidget {
                         name: valueMain.iosDevicesList[index].name,
                         screenSize: valueMain.iosDevicesList[index].screenSize),
                   ),
-            itemCount:  valueMain.iosDevicesList.length,
-          ),
-        ),
+                  itemCount: valueMain.iosDevicesList.length,
+                ),
+              ),
       ),
     );
   }

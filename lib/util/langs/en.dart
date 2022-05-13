@@ -77,6 +77,8 @@ const Map<String, String> en = {
   'From Camera': 'From Camera',
   'From Gallery': 'From Gallery',
   'Remove': 'Remove',
+  'Edit':'Edit',
+  'Log Out':'Log Out',
   //drawer
   'Logged as ': 'Logged as ',
   'Available devices': 'Available devices',

@@ -94,7 +94,8 @@ class AuthProvider with ChangeNotifier {
 
   Future updateUserData({EmployeeModel? userUpdate}) async {
     isLoading.value = true;
-    if(userUpdate == null) {
+    notifyListeners();
+    if (userUpdate == null) {
       //used when edit userdata in edit screen
       await _firestoreUsers.updateEmployee(employeeModel!);
     } else {

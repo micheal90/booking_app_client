@@ -9,7 +9,6 @@ import 'package:booking_app_client/widgets_model/custom_list_tile.dart';
 import 'package:booking_app_client/widgets_model/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:provider/provider.dart';
 
 class MainDrawer extends StatelessWidget {
@@ -24,8 +23,8 @@ class MainDrawer extends StatelessWidget {
             Consumer<AuthProvider>(
               builder: (context, valueAuth, child) => Container(
                 height: 150,
-                padding:
-                    EdgeInsets.only(top: 30, left: 10, right: 10, bottom: 10),
+                padding: const EdgeInsets.only(
+                    top: 30, left: 10, right: 10, bottom: 10),
                 color: Colors.blue,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -78,20 +77,20 @@ class MainDrawer extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             CustomListTile(
               onTap: () => Navigator.of(context).pushReplacement(
                   MaterialPageRoute(builder: (context) => HomeScreen())),
               title: 'Available devices'.tr,
-              leading: Icon(Icons.devices),
+              leading: const Icon(Icons.devices),
             ),
             CustomListTile(
               onTap: () => Navigator.of(context).pushReplacement(
                   MaterialPageRoute(builder: (context) => AllDevicesScreen())),
               title: 'All Devices'.tr,
-              leading: Icon(Icons.apps),
+              leading: const Icon(Icons.apps),
             ),
-            Divider(),
+            const Divider(),
             // CustomListTile(
             //   onTap: () => Navigator.of(context).pushReplacement(
             //       MaterialPageRoute(
@@ -117,25 +116,27 @@ class MainDrawer extends StatelessWidget {
                     MaterialPageRoute(
                         builder: (context) => MyScheduleReservationScreen())),
                 title: 'My Schedule Reservation'.tr,
-                leading: Icon(Icons.schedule)),
+                leading: const Icon(Icons.schedule)),
             CustomListTile(
                 onTap: () => Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
                         builder: (context) => MyReservedDevicesScreen())),
                 title: 'My Reserved Devices'.tr,
-                leading: Icon(Icons.mobile_friendly)),
+                leading: const Icon(Icons.mobile_friendly)),
             CustomListTile(
               onTap: () => Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => ProfileScreen())),
+                  MaterialPageRoute(
+                      builder: (context) => const ProfileScreen())),
               title: 'Profile'.tr,
-              leading: Icon(Icons.person),
+              leading: const Icon(Icons.person),
             ),
             GetBuilder<TranslateController>(
               init: Get.find<TranslateController>(),
               builder: (controller) => ListTile(
-                leading: Icon(Icons.language),
-                title: Row(children: [
-                  CustomText(
+                leading: const Icon(Icons.language),
+                title: Row(
+                  children: [
+                    CustomText(
                       text: 'English'.tr,
                     ),
                     Radio(
@@ -143,7 +144,6 @@ class MainDrawer extends StatelessWidget {
                         groupValue: controller.selectedLang,
                         onChanged: (String? lang) =>
                             controller.changeLanguage(lang!)),
-                   
                     CustomText(
                       text: 'Arabic'.tr,
                     ),
@@ -153,10 +153,10 @@ class MainDrawer extends StatelessWidget {
                       onChanged: (String? lang) =>
                           controller.changeLanguage(lang!),
                     )
-                ],),
+                  ],
+                ),
               ),
             ),
-           
           ],
         ),
       ),

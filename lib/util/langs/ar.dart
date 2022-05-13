@@ -60,6 +60,7 @@ const Map<String, String> ar = {
   'Phone': 'الهاتف',
   'Enter the Phone': 'أدخل الهاتف',
   'Update': 'تحديث',
+
   // my reservatio devoce screen
   'My Reserved Devices': 'أجهزتي المحجوزة',
   'No reservation yet': 'لا يوجد حجوزات حتى الآن',
@@ -77,6 +78,10 @@ const Map<String, String> ar = {
   'From Camera': 'من الكاميرا',
   'From Gallery': 'من المعرض',
   'Remove': 'حذف',
+    'Edit':'تعديل',
+      'Log Out':'تسجيل خروج',
+
+
    //drawer
   'Logged as ':'مسجّل باسم ',
   'Available devices':'الأجهزة المتاحة',

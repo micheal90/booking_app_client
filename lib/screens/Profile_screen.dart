@@ -74,13 +74,13 @@ class ProfileScreen extends StatelessWidget {
     return DoubleBack(
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Profile Screen'),
+          title: Text('Profile'.tr),
           actions: [
             TextButton(
                 onPressed: () => Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => EditProfileScreen())),
                 child: CustomText(
-                  text: 'Edit',
+                  text: 'Edit'.tr,
                   alignment: Alignment.center,
                   color: Colors.white,
                 ))
@@ -137,19 +137,19 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 CustomListTileProfile(
                   leading: Icon(Icons.person, color: KPrimaryColor),
-                  title: 'Name',
+                  title: 'Name'.tr,
                   subtitle: value.employeeModel!.name +
                       ' ' +
                       value.employeeModel!.lastName,
                 ),
                 CustomListTileProfile(
                   leading: Icon(Icons.group_rounded, color: KPrimaryColor),
-                  title: 'Occupation Group',
+                  title: 'Occupation Group'.tr,
                   subtitle: value.employeeModel!.occupationGroup,
                 ),
                 CustomListTileProfile(
                   leading: Icon(Icons.email, color: KPrimaryColor),
-                  title: 'Email',
+                  title: 'Email'.tr,
                   subtitle: value.employeeModel!.email,
                 ),
                 CustomListTileProfile(
@@ -157,7 +157,7 @@ class ProfileScreen extends StatelessWidget {
                     Icons.phone,
                     color: KPrimaryColor,
                   ),
-                  title: 'Phone',
+                  title: 'Phone'.tr,
                   subtitle: value.employeeModel!.phone,
                 ),
                 SizedBox(
@@ -174,7 +174,7 @@ class ProfileScreen extends StatelessWidget {
                     Icons.logout,
                   ),
                   label: Text(
-                    'Log Out',
+                    'Log Out'.tr,
                     style: TextStyle(
                       color: Colors.red,
                     ),

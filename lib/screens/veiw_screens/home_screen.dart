@@ -55,12 +55,12 @@ class _HomeScreenState extends State<HomeScreen> {
           builder: (context, valueMain, child) => Scaffold(
               appBar: AppBar(
                 //centerTitle: true,
-                title: Text("Booking App Employee"),
+                title: const Text("Booking App Employee"),
                 actions: [
                   IconButton(
                       icon: valueMain.isSearch.value
-                          ? Icon(Icons.cancel_outlined)
-                          : Icon(Icons.search),
+                          ? const Icon(Icons.cancel_outlined)
+                          : const Icon(Icons.search),
                       onPressed: () => showSearch(
                           context: context, delegate: SearchDevices()))
                 ],
@@ -73,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 15,
                     ),
                     Row(
@@ -118,7 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 15,
                     ),
                     CustomText(
@@ -126,16 +126,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 15,
                     ),
                     Expanded(
                       child: valueMain.isLoading.value
-                          ? Center(child: CircularProgressIndicator())
+                          ? const Center(child: CircularProgressIndicator())
                           : buildGridView(valueMain),
                     )
                   ])),
-              drawer: MainDrawer()),
+              drawer: const MainDrawer()),
         ),
       ),
     );
@@ -144,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
   ListView buildListView(MainProvider value) {
     return ListView.builder(
       itemCount: value.devicesNotBookedList.length,
-      itemBuilder: (context, index) => Container(
+      itemBuilder: (context, index) => SizedBox(
         width: 150,
         height: 200,
         child: DeviceItemView(
@@ -157,23 +157,23 @@ class _HomeScreenState extends State<HomeScreen> {
 
   GridView buildGridView(MainProvider value) {
     return GridView.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           childAspectRatio: 1,
           crossAxisSpacing: 10,
           //mainAxisExtent: 200,
           mainAxisSpacing: 10),
-      itemBuilder: (context, index) =>  GestureDetector(
-              onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) => DeviceDetailsScreen(
-                      deviceId: value.devicesNotBookedList[index].id))),
-              child: DeviceItemView(
-                  imageUrl: value.devicesNotBookedList[index].imageUrl[0],
-                  name: value.devicesNotBookedList[index].name,
-                  available: value.devicesNotBookedList[index].isBooked,
-                  screenSize: value.devicesNotBookedList[index].screenSize),
-            ),
-      itemCount:  value.devicesNotBookedList.length,
+      itemBuilder: (context, index) => GestureDetector(
+        onTap: () => Navigator.of(context).push(MaterialPageRoute(
+            builder: (_) => DeviceDetailsScreen(
+                deviceId: value.devicesNotBookedList[index].id))),
+        child: DeviceItemView(
+            imageUrl: value.devicesNotBookedList[index].imageUrl[0],
+            name: value.devicesNotBookedList[index].name,
+            available: value.devicesNotBookedList[index].isBooked,
+            screenSize: value.devicesNotBookedList[index].screenSize),
+      ),
+      itemCount: value.devicesNotBookedList.length,
     );
   }
 }

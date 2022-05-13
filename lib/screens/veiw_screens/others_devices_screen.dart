@@ -12,8 +12,7 @@ class OthersDevicesScreen extends StatelessWidget {
     return Consumer<MainProvider>(
       builder: (context, valueMain, child) => Scaffold(
         appBar: AppBar(
-          title:  Text("Others Devices"),
-         
+          title: const Text("Others Devices"),
         ),
         body: valueMain.othersDevicesList.isEmpty
             ? Center(
@@ -26,28 +25,25 @@ class OthersDevicesScreen extends StatelessWidget {
             : Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       childAspectRatio: 1,
                       crossAxisSpacing: 10,
                       mainAxisExtent: 200,
                       mainAxisSpacing: 10),
-                  itemBuilder: (context, index) =>  GestureDetector(
-                          onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (_) => DeviceDetailsScreen(
-                                      deviceId: valueMain
-                                          .othersDevicesList[index].id))),
-                          child: DeviceItemView(
-                              imageUrl: valueMain
-                                  .othersDevicesList[index].imageUrl[0],
-                              name: valueMain.othersDevicesList[index].name,
-                              available:
-                                  valueMain.othersDevicesList[index].isBooked,
-                              screenSize: valueMain
-                                  .othersDevicesList[index].screenSize),
-                        ),
-                  itemCount:  valueMain.othersDevicesList.length,
+                  itemBuilder: (context, index) => GestureDetector(
+                    onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                        builder: (_) => DeviceDetailsScreen(
+                            deviceId: valueMain.othersDevicesList[index].id))),
+                    child: DeviceItemView(
+                        imageUrl:
+                            valueMain.othersDevicesList[index].imageUrl[0],
+                        name: valueMain.othersDevicesList[index].name,
+                        available: valueMain.othersDevicesList[index].isBooked,
+                        screenSize:
+                            valueMain.othersDevicesList[index].screenSize),
+                  ),
+                  itemCount: valueMain.othersDevicesList.length,
                 ),
               ),
       ),
